@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>vertical-align 시각 가이드</title>
+    <style>
+      @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
+      :root {
+        --c-black: #181c34;
+        --c-gray: #4a4b54;
+        --c-line: #4c00ee;
+        --c-bg: #f3f5f8;
+        --c-card: #ffffff;
+        --c-orange: #ff6600;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        padding: 40px 20px 80px;
+        font-family:
+          "Pretendard Variable",
+          -apple-system,
+          sans-serif;
+        font-size: 15px;
+        line-height: 1.6;
+        color: var(--c-black);
+        background: var(--c-bg);
+      }
+
+      .wrap {
+        max-width: 880px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+        font-size: 28px;
+      }
+      h2 {
+        margin: 48px 0 16px;
+        padding: 10px 16px;
+        font-size: 18px;
+        color: white;
+        background: var(--c-black);
+        border-radius: 8px;
+      }
+      h3 {
+        margin: 0 0 4px;
+        font-size: 16px;
+      }
+      .lead {
+        margin-bottom: 32px;
+        color: var(--c-gray);
+      }
+
+      .card {
+        margin: 16px 0;
+        padding: 20px 24px;
+        background: var(--c-card);
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      }
+      .card-desc {
+        margin: 6px 0 16px;
+        font-size: 14px;
+        color: var(--c-gray);
+      }
+
+      /* ======= 데모 라인 ======= */
+      /* font/line-height를 크게 잡아서 line box를 눈에 띄게 */
+      .demo {
+        position: relative;
+        overflow: hidden;
+        margin: 12px 0;
+        padding: 0 24px;
+        font-size: 30px;
+        line-height: 80px;
+        white-space: nowrap;
+        background: var(--c-bg);
+        border: 1px dashed #9394a4;
+        border-radius: 8px;
+      }
+      /* line box top/bottom 가이드라인 */
+      .demo::before,
+      .demo::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 0;
+        border-top: 1px solid var(--c-line);
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      .demo::before {
+        top: 0;
+      }
+      .demo::after {
+        bottom: 0;
+      }
+      .demo .axis-label {
+        position: absolute;
+        right: 8px;
+        padding: 2px 6px;
+        font-family: monospace;
+        font-size: 11px;
+        line-height: 1;
+        color: var(--c-line);
+        background: white;
+        border-radius: 3px;
+      }
+      .demo .axis-label-top {
+        top: 4px;
+      }
+      .demo .axis-label-bottom {
+        bottom: 4px;
+      }
+
+      /* 정렬 비교용 컬러 박스 */
+      .box {
+        display: inline-block;
+        width: 48px;
+        height: 40px;
+        margin: 0 2px;
+        font-family: monospace;
+        font-size: 10px;
+        color: white;
+        text-align: center;
+        line-height: 40px;
+        background: var(--c-line);
+        border-radius: 4px;
+      }
+      .va-baseline {
+        vertical-align: baseline;
+        background: #4c00ee;
+      }
+      .va-top {
+        vertical-align: top;
+        background: #ff6600;
+      }
+      .va-bottom {
+        vertical-align: bottom;
+        background: #00a86b;
+      }
+      .va-middle {
+        vertical-align: middle;
+        background: #d82e18;
+      }
+      .va-text-top {
+        vertical-align: text-top;
+        color: var(--c-black);
+        background: #7abfff;
+      }
+      .va-text-bottom {
+        vertical-align: text-bottom;
+        background: #f59e0b;
+      }
+
+      /* 범례 */
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 16px;
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--c-gray);
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .legend-swatch {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+      }
+
+      /* 코드 / 노트 */
+      code {
+        padding: 2px 6px;
+        font-family: "SF Mono", Monaco, monospace;
+        font-size: 13px;
+        background: #e6e8ec;
+        border-radius: 4px;
+      }
+      pre {
+        overflow-x: auto;
+        margin: 12px 0;
+        padding: 14px 18px;
+        font-family: "SF Mono", Monaco, monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        color: #e6e8ec;
+        background: var(--c-black);
+        border-radius: 8px;
+      }
+      pre .c {
+        color: #8a8c99;
+      }
+      pre .k {
+        color: #ff9b73;
+      }
+      pre .v {
+        color: #a5e2ff;
+      }
+
+      .note {
+        margin: 12px 0;
+        padding: 12px 16px;
+        font-size: 14px;
+        background: #fef3e6;
+        border-left: 4px solid var(--c-orange);
+        border-radius: 4px;
+      }
+
+      /* 트릭 비교 데모 (실제 라벨 스케일) */
+      .trick-demo {
+        position: relative;
+        margin: 8px 0;
+        padding: 24px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 24px;
+        color: var(--c-black);
+        background: var(--c-bg);
+        border-radius: 8px;
+      }
+      .trick-demo .marker {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: var(--c-orange);
+        border-radius: 50%;
+      }
+      .trick-demo .marker.fix {
+        width: 16px;
+        height: 24px;
+        vertical-align: top;
+        background: #fff5ee url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="%23ff6600"/></svg>') no-repeat center / 16px 16px;
+        border: 1px dashed #ff6600;
+        border-radius: 0;
+      }
+      .trick-demo .marker.middle {
+        vertical-align: middle;
+      }
+      .trick-demo .label {
+        display: inline-block;
+        margin-right: 8px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: white;
+        background: var(--c-black);
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <h1>vertical-align 시각 가이드</h1>
+      <p class="lead">
+        inline / inline-block 요소가 한 줄 안에서 어떻게 정렬되는지 눈으로 확인하는 페이지.<br />
+        각 데모의 <b>위 실선</b>과 <b>아래 실선</b>은 <code>line box</code>의 경계.
+      </p>
+
+      <h2>1. 한 줄에 모두 비교</h2>
+
+      <div class="card">
+        <p class="card-desc">같은 텍스트 라인에 48×40 박스를 6개 넣고 각각 다른 <code>vertical-align</code> 값을 줬어. 어디로 가는지 한눈에 비교.</p>
+        <div class="demo">
+          <span class="axis-label axis-label-top">line box top</span>
+          <span class="axis-label axis-label-bottom">line box bottom</span>
+          Ag텍스트
+          <span class="box va-baseline">base</span>
+          <span class="box va-top">top</span>
+          <span class="box va-bottom">btm</span>
+          <span class="box va-middle">mid</span>
+          <span class="box va-text-top">tTop</span>
+          <span class="box va-text-bottom">tBtm</span>
+          Ag텍스트
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background: #4c00ee"></span>baseline (기본)</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: #ff6600"></span>top</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: #00a86b"></span>bottom</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: #d82e18"></span>middle</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: #7abfff"></span>text-top</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: #f59e0b"></span>text-bottom</span>
+        </div>
+      </div>
+
+      <h2>2. 각 값 자세히 보기</h2>
+
+      <div class="card">
+        <h3>baseline <span style="font-size: 12px; color: var(--c-gray)">(기본값)</span></h3>
+        <p class="card-desc">박스의 <b>아래쪽이 글자의 baseline</b>에 앉음. 영문 알파벳이 앉는 그 선.</p>
+        <div class="demo">
+          Ag텍스트
+          <span class="box va-baseline">base</span>
+          Ag텍스트
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>top</h3>
+        <p class="card-desc">박스의 <b>top이 line box의 top</b>에 붙음. 폰트 메트릭과 무관하게 line box 자체에 정렬.</p>
+        <div class="demo">
+          Ag텍스트
+          <span class="box va-top">top</span>
+          Ag텍스트
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>bottom</h3>
+        <p class="card-desc">박스의 <b>bottom이 line box의 bottom</b>에 붙음.</p>
+        <div class="demo">
+          Ag텍스트
+          <span class="box va-bottom">btm</span>
+          Ag텍스트
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>middle <span style="font-size: 13px; color: #d82e18">⚠️ 함정</span></h3>
+        <p class="card-desc">
+          박스의 세로 중심을 <b>baseline + (x-height / 2)</b> 에 맞춤.<br />
+          line box 한가운데가 <b>아님</b>. x-height는 소문자 x 높이 기준이라, 한글이나 큰 글자에서는 시각적 중심과 어긋나 보이는 일이 잦아.
+        </p>
+        <div class="demo">
+          Ag텍스트
+          <span class="box va-middle">mid</span>
+          Ag텍스트
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>text-top / text-bottom</h3>
+        <p class="card-desc">박스의 top/bottom을 <b>부모 폰트의 ascent / descent line</b>에 맞춤. line box보다 좁은 "글자가 실제로 그려지는 영역"의 경계.</p>
+        <div class="demo">
+          Ag텍스트
+          <span class="box va-text-top">tTop</span>
+          <span class="box va-text-bottom">tBtm</span>
+          Ag텍스트
+        </div>
+      </div>
+
+      <h2>3. line-height에 따라 어떻게 달라지는가</h2>
+      <div class="card">
+        <p class="card-desc">
+          같은 폰트 크기라도 <code>line-height</code>가 커지면 line box가 커져.<br />
+          <code>top</code> / <code>bottom</code> 은 line box 끝에 묶이므로 line-height에 따라 위치가 변하지만, <code>baseline</code> / <code>text-top</code> / <code>text-bottom</code> 은 폰트 자체에 묶여있어서 거의 변하지 않아.
+        </p>
+
+        <div class="demo" style="line-height: 40px">
+          <span class="axis-label axis-label-top">line-height: 40px</span>
+          Ag
+          <span class="box va-top">top</span>
+          <span class="box va-middle">mid</span>
+          <span class="box va-bottom">btm</span>
+          <span class="box va-text-top">tTop</span>
+          Ag
+        </div>
+        <div class="demo" style="line-height: 120px">
+          <span class="axis-label axis-label-top">line-height: 120px</span>
+          Ag
+          <span class="box va-top">top</span>
+          <span class="box va-middle">mid</span>
+          <span class="box va-bottom">btm</span>
+          <span class="box va-text-top">tTop</span>
+          Ag
+        </div>
+      </div>
+
+      <h2>4. 프로젝트에서 쓴 트릭</h2>
+      <div class="card">
+        <p class="card-desc">
+          필수 표시 아이콘을 <b>폰트 메트릭에 의존하지 않고</b> 라인 중앙에 정확히 두는 방법.<br />
+          ① 아이콘 박스의 height를 <code>line-height</code>와 동일하게 → ② <code>vertical-align: top</code> 으로 line box 전체를 점유 → ③ 그 안에서 <code>background-position: center</code> 로 실제 아이콘은 중앙 정렬.
+        </p>
+
+        <div class="trick-demo">
+          <span class="label">middle</span>
+          설문조사<span class="marker middle"></span>
+        </div>
+        <p style="margin-bottom: 16px; font-size: 13px; color: var(--c-gray)">↑ <code>vertical-align: middle</code> + 16×16 박스 → 한글에서 살짝 위로 떠 보임</p>
+
+        <div class="trick-demo">
+          <span class="label">fix</span>
+          설문조사<span class="marker fix"></span>
+        </div>
+        <p style="margin-bottom: 16px; font-size: 13px; color: var(--c-gray)">↑ 16×24 박스 (점선) + <code>vertical-align: top</code> + 안쪽에 16×16 아이콘을 background center → 정확히 중앙</p>
+
+        <pre><span class="c">/* 핵심 코드 */</span>
+.question-label {
+  <span class="k">line-height</span>: <span class="v">24px</span>;
+}
+.question-label::after {
+  <span class="k">width</span>: <span class="v">16px</span>;
+  <span class="k">height</span>: <span class="v">24px</span>;             <span class="c">/* line-height와 동일 */</span>
+  <span class="k">vertical-align</span>: <span class="v">top</span>;      <span class="c">/* line box 전체 점유 */</span>
+  <span class="k">background</span>: url(...) no-repeat center / <span class="v">16px 16px</span>;
+}</pre>
+
+        <div class="note"><b>왜 이게 더 정확한가?</b><br /><code>middle</code>은 폰트의 x-height에 묶여있어서 한글 폰트에서는 시각 중심과 어긋남. 박스를 line box와 같은 크기로 키우면 어떤 폰트를 써도 항상 기하학적 중앙에 위치.</div>
+      </div>
+    </div>
+  </body>
+</html>
